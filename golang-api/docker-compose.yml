@@ -1,0 +1,39 @@
+version: '3.9'
+
+# Este compose NO levanta MySQL — usa la instancia local del host.
+# - app: servicio principal (API Go)
+# - flyway: servicio bajo demanda (profile "tools") para migraciones
+#
+# Comandos típicos:
+#   docker-compose up --build app              # levantar la API
+#   docker-compose run --rm flyway migrate     # aplicar migraciones pendientes
+#   docker-compose run --rm flyway info        # ver estado de migraciones
+#   docker-compose run --rm flyway validate    # validar archivos vs BD
+#   docker-compose run --rm flyway repair      # reparar checksum history
+
+services:
+  app:
+    build: .
+    container_name: golang_api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      DB_HOST: host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  flyway:
+    image: flyway/flyway:10-alpine
+    profiles: ["tools"]
+    volumes:
+      - ./migrations:/flyway/sql
+    environment:
+      FLYWAY_URL: jdbc:mysql://host.docker.internal:3306/${DB_NAME}?allowPublicKeyRetrieval=true&useSSL=false
+      FLYWAY_USER: ${DB_USER}
+      FLYWAY_PASSWORD: ${DB_PASSWORD}
+      FLYWAY_BASELINE_ON_MIGRATE: "true"
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

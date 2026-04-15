@@ -1,0 +1,26 @@
+# Variables de entorno (NUNCA commitear secretos)
+**/.env
+!**/.env.example
+
+# Binarios Go
+*.exe
+*.test
+*.out
+server
+golang-api/server
+
+# Directorios de build
+/bin/
+/tmp/
+vendor/
+
+# IDE / editores
+.idea/
+.vscode/
+
+# Claude Code (configuración local del agente)
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db

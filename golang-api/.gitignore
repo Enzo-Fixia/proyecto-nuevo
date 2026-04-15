@@ -1,0 +1,11 @@
+.env
+*.exe
+*.test
+*.out
+server
+/bin/
+/tmp/
+vendor/
+.idea/
+.vscode/
+.DS_Store
